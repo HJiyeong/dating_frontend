@@ -1,4 +1,4 @@
-package com.dataing_frontend
+package com.dating_frontend
 
 import android.app.Application
 import com.facebook.react.PackageList

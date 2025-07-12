@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
-      withModuleName: "dataing_frontend",
+      withModuleName: "dating_frontend",
       in: window,
       launchOptions: launchOptions
     )

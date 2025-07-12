@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "937023082225",
+    "project_id": "aiosiranai",
+    "storage_bucket": "aiosiranai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937023082225:android:76411f72d67382c60ca350",
+        "android_client_info": {
+          "package_name": "com.dating_frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937023082225-rd8k0s95asok1b9rvm24g64l1ltgrvng.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dating_frontend",
+            "certificate_hash": "4ab908d05721d6b14d6c7dcaa1bb22cd00368489"
+          }
+        },
+        {
+          "client_id": "937023082225-336mh92jog7lcmjlmud7g1qp0crcij8c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQuR_Wt6oZE_PSMKcDAqoLIBM8YGrUwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "937023082225-336mh92jog7lcmjlmud7g1qp0crcij8c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

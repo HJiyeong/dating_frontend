@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "dataing_frontend.app"
-               BlueprintName = "dataing_frontend"
-               ReferencedContainer = "container:dataing_frontend.xcodeproj">
+               BuildableName = "dating_frontend.app"
+               BlueprintName = "dating_frontend"
+               ReferencedContainer = "container:dating_frontend.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "dataing_frontendTests.xctest"
-               BlueprintName = "dataing_frontendTests"
-               ReferencedContainer = "container:dataing_frontend.xcodeproj">
+               BuildableName = "dating_frontendTests.xctest"
+               BlueprintName = "dating_frontendTests"
+               ReferencedContainer = "container:dating_frontend.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dataing_frontend.app"
-            BlueprintName = "dataing_frontend"
-            ReferencedContainer = "container:dataing_frontend.xcodeproj">
+            BuildableName = "dating_frontend.app"
+            BlueprintName = "dating_frontend"
+            ReferencedContainer = "container:dating_frontend.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dataing_frontend.app"
-            BlueprintName = "dataing_frontend"
-            ReferencedContainer = "container:dataing_frontend.xcodeproj">
+            BuildableName = "dating_frontend.app"
+            BlueprintName = "dating_frontend"
+            ReferencedContainer = "container:dating_frontend.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
