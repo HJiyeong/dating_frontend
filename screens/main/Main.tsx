@@ -88,6 +88,7 @@ const Main = ({navigation}) => {
 				<Button title="백그라운드 재생" onPress={() => playSignedUrl('')} />
 				<Button title="스탑" onPress={() => stopSound()} />
 				<Button title="시나리오" onPress={() => mutateGetTest()} />
+				<Button title='내 작업 공간' onPress={() => navigation.navigate('Workspace')} />
 			</Container>
 		</>
 	);

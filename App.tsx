@@ -12,6 +12,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './screens/loading/Loading'
 import MainScreen from './screens/main/Main'
+import WorkspaceScreen from './screens/layout/basic_layout';
 const Stack = createNativeStackNavigator();
 function App() {
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
 		<Stack.Navigator initialRouteName="Loading">
 			<Stack.Screen name="Loading" options={{headerShown:false}} component={LoadingScreen}/>
 			<Stack.Screen name="Main" options={{headerShown:false}} component={MainScreen}/>
+			<Stack.Screen name="Workspace" options={{headerShown:false}} component={WorkspaceScreen} />
 		</Stack.Navigator>
 	</NavigationContainer>
   );
