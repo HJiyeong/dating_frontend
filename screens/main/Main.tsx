@@ -65,7 +65,7 @@ const Main = ({navigation}) => {
 					style={{width:200, height:200}}
 					resizeMode="contain"
 				/> */}
-				<Button title="구글 계정으로 시작하기" onPress={signInWithKakao} />
+				<Button title="카카오 로그인" onPress={signInWithKakao} />
 				<Button title="백그라운드 재생" onPress={() => playSignedUrl('')} />
 				<Button title="스탑" onPress={() => stopSound()} />
 				<Button title="시나리오" onPress={() => mutateGetTest()} />

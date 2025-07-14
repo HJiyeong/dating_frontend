@@ -12,7 +12,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './screens/loading/Loading'
 import MainScreen from './screens/main/Main'
-import WorkspaceScreen from './screens/layout/basic_layout';
+import WorkspaceScreen from './screens/workspace-screen/WorkspaceScreen';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Auth from './utils/auth'
