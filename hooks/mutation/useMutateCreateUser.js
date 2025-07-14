@@ -1,16 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from 'axios'
 import url from '../../utils/backend'
-const getToken = async({user_id}) => {
+const createUser = async({kakao_id, name}) => {
 	const res = await axios.post(url + '/user/login', {
-		user_id
+		kakao_id, name
 	})
 	return res.data
 }
-const useMutateLogin = ({onSuccess}) => {
+const useMutateCreateUser = ({onSuccess}) => {
 	
 	return useMutation({
-		mutationFn: getToken,
+		mutationFn: createUser,
         onSuccess:(data) => {
 			if(onSuccess) onSuccess(data)
         },
@@ -19,4 +19,4 @@ const useMutateLogin = ({onSuccess}) => {
 		}
     })
 }
-export default useMutateLogin
+export default useMutateCreateUser

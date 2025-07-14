@@ -1,16 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from 'axios'
 import url from '../../utils/backend'
-const getToken = async({user_id}) => {
-	const res = await axios.post(url + '/user/login', {
-		user_id
-	})
+const checkExist = async({kakao_id}) => {
+	const res = await axios.get(url + '/user/exist?id=' + kakao_id);
 	return res.data
 }
-const useMutateLogin = ({onSuccess}) => {
+const useMutateCheckExist = ({onSuccess}) => {
 	
 	return useMutation({
-		mutationFn: getToken,
+		mutationFn: checkExist,
         onSuccess:(data) => {
 			if(onSuccess) onSuccess(data)
         },
@@ -19,4 +17,4 @@ const useMutateLogin = ({onSuccess}) => {
 		}
     })
 }
-export default useMutateLogin
+export default useMutateCheckExist
