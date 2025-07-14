@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Container from '../../components/Container';
+import useMutateGetImage from '../../hooks/mutation/useMutateGetImage'
+import useMutateGetAudio from '../../hooks/mutation/useMutateGetAudio'
+import OverlayLoading from '../../components/OverlayLoading';
+import SettingsModal from '../../components/SettingsModal';
 
 const dialogList = [
   '첫번쨰 대사',
@@ -9,10 +13,27 @@ const dialogList = [
 ];
 
 
+
 const WorkspaceScreen = () => {
+  const [isCurrent, setIsCurrent] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
+
+  const {mutate: mutateGetImage, isLoading: loadingImage} = useMutateGetImage({
+    onSuccess:(data) => {
+      console.log(data.url)
+    }
+  })
+
+    const {mutate: mutateGetAudio, isLoading: loadingAudio} = useMutateGetAudio({
+  onSuccess:(data) => {
+    console.log(data.url)
+  }
+})
+
 
   useEffect(() => {
     if (currentIndex >= dialogList.length) return;
@@ -44,20 +65,29 @@ const WorkspaceScreen = () => {
       setCurrentIndex(currentIndex + 1);
     }
   };
+
+    const handleChangeImage = () => {
+      if(isCurrent) setCharacterImage(require('../../assets/images/123.png'));
+      else setCharacterImage(require('../../assets/images/ex2.png'));  // 이미지 변경
+      setIsCurrent(!isCurrent)
+  };
+
+
   return (
     <ImageBackground
       source={require('../../assets/images/background.png')}
       style={{ flex: 1 }}
     >
+      {loadingAudio && <OverlayLoading/>}
       <Container style={styles.overlay}>
 
-        <TouchableOpacity style={styles.settingsButton} onPress={() => console.log('설정 클릭')}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
           <Text style={styles.settingsText}>⚙️</Text>
         </TouchableOpacity>
 
         <View style={styles.characterContainer}>
           <Image
-            source={require('../../assets/images/sample_img.png')}
+            source={characterImage}
             style={styles.characterImage}
             resizeMode="contain"
           />
@@ -74,11 +104,16 @@ const WorkspaceScreen = () => {
             <Text style={{ color: 'white' }}>▶</Text>
           </TouchableOpacity>
 
+        <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
+          <Text style={{ color: 'white' }}>이미지 변경</Text>
+        </TouchableOpacity>
 
 
         </View>
 
       </Container>
+      <SettingsModal visible={showModal} onClose={() => setShowModal(false)} />
+
     </ImageBackground>
   );
 };
