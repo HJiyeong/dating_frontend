@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity,Animated } from 'react-native';
 import Container from '../../components/Container';
 import useMutateGetImage from '../../hooks/mutation/useMutateGetImage'
 import useMutateGetAudio from '../../hooks/mutation/useMutateGetAudio'
@@ -30,7 +30,30 @@ const WorkspaceScreen = ({navigation}) => {
 	const effectType = effectTypeZustand(state => state.effectType)
 	const soundType = soundTypeZustand(state => state.soundType)
 	const [effectSoundKey, setEffectSoundKey] = useState('')
+  const translateX = useRef(new Animated.Value(0)).current;
 	//   const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
+
+
+  const animateCharacter = () => {
+  Animated.sequence([
+    Animated.timing(translateX, {
+      toValue: 20,   // 오른쪽으로 20 이동
+      duration: 500, // 0.5초
+      useNativeDriver: true,
+    }),
+    Animated.timing(translateX, {
+      toValue: -20,  // 왼쪽으로 20 이동
+      duration: 500,
+      useNativeDriver: true,
+    }),
+    Animated.timing(translateX, {
+      toValue: 0,    // 원위치
+      duration: 500,
+      useNativeDriver: true,
+    }),
+  ]).start();
+};
+
 
 	const {mutate: mutateGetImage, isLoading: loadingImage} = useMutateGetImage({
 		onSuccess:(data) => {
@@ -106,7 +129,12 @@ const WorkspaceScreen = ({navigation}) => {
 			const tmp = dialogList[currentIndex + 1]
 			if(tmp.background_image_id) setBackgroundImageKey(tmp.background_image_id)
 			if(tmp.not_character) setCharacterImageKey('')
-			else if(tmp.character_image_id) setCharacterImageKey(tmp.character_image_id)
+			else if(tmp.character_image_id){
+        setCharacterImageKey(tmp.character_image_id)
+        setTimeout(() => {
+          animateCharacter()
+        },300)
+      }
 			if(tmp.background_sound_id) setBackgroundSoundKey(tmp.background_sound_id)
 			if(tmp.effect_sound_id) setEffectSoundKey(tmp.effect_sound_id)
 			else setEffectSoundKey('')
@@ -161,37 +189,42 @@ const WorkspaceScreen = ({navigation}) => {
 		>
 		{(loadingAudio || loadingScenario) && <OverlayLoading/>}
 		<Container style={styles.overlay}>
-
 			<TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
 			<Text style={styles.settingsText}>⚙️</Text>
 			</TouchableOpacity>
 
 			<View style={styles.characterContainer}>
+        <Animated.View style={{ transform: [{ translateX }] }}>
 			{characterImageKey && 
 			<Image
 				source={{uri: characterImageKey}}
 				style={styles.characterImage}
 				resizeMode="contain"
 			/>}
+      </Animated.View>
 			</View>
 
-			<View style={styles.dialogBox}>
-			<View style={styles.nameBox}>
-				<Text style={styles.nameText}>이름</Text>
-			</View>
-			<Text style={styles.dialogText}>{displayedText}</Text>
+<TouchableOpacity onPress={handleNext} activeOpacity={1} style={styles.dialogBox}>
 
+    <View style={{ flex: 1 }}>
+        <View style={styles.nameBox}>
+            <Text style={styles.nameText}>이름</Text>
+        </View>
 
-			<TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-				<Text style={{ color: 'white' }}>▶</Text>
-			</TouchableOpacity>
+        <Text style={styles.dialogText}>{displayedText}</Text>
+    </View>
+
+    <View style={styles.nextButtonContainer}>
+        <Text style={styles.nextButton}>▶</Text>
+    </View>
+
+</TouchableOpacity>
 
 			{/* <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
 			<Text style={{ color: 'white' }}>이미지 변경</Text>
 			</TouchableOpacity> */}
 
 
-			</View>
 
 		</Container>
 		<SettingsModal visible={showModal} backgroundSoundKey={backgroundSoundKey} effectSoundKey={effectSoundKey} onClose={() => setShowModal(false)} />
@@ -219,21 +252,35 @@ const styles = StyleSheet.create({
 		height: 360,//400
 	},
 
-	dialogBox: {
-		position: 'absolute',  
-		bottom: 20,
-		width: '80%',
-		height: 100,
-		paddingVertical: 24,
-		paddingHorizontal: 20,
-		backgroundColor: 'rgba(0,0,0,0.6)',
-		borderRadius: 20,
-		zIndex: 10,   
-	},
+dialogBox: {
+   
+    position: 'absolute',  
+    bottom: 20,
+    width: '80%',
+    height: 100,  // 그대로 유지
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 20,
+    zIndex: 10,
+
+    flexDirection: 'row',  // 가로로 배치
+    justifyContent: 'space-between',
+    alignItems: 'center',
+},
+    nextButtonContainer: {
+      alignSelf: 'flex-end',  // 항상 오른쪽 하단으로
+      marginTop: 8,
+  },
+
+  nextButtonText: {
+      color: 'white',
+      fontSize: 18,
+  },
 
 	nameBox: {
 		position: 'absolute',
-		top: -26,
+		top: -40,
 		left: 16,
 		backgroundColor: 'rgba(255,255,255,0.8)',
 		paddingHorizontal: 12,
@@ -242,25 +289,28 @@ const styles = StyleSheet.create({
 	},
 
 	nameText: {
+    fontFamily: 'myfont',
 		fontWeight: 'bold',
 		fontSize: 14,
 		color: '#222',
 	},
 
-	dialogText: {
-		fontSize: 18,
-		color: '#fff',
-		lineHeight: 28,
-		textAlign: 'center',
-	},
-	nextButton: {
-	marginTop: 12,
-	alignSelf: 'flex-end',
-	backgroundColor: 'rgba(255,255,255,0.2)',
-	paddingVertical: 6,
-	paddingHorizontal: 12,
-	borderRadius: 8,
-	},
+dialogText: {
+   fontFamily: 'myfont',
+    fontSize: 18,
+    color: '#fff',
+    lineHeight: 24,
+    flex: 1,  // 가로 공간 차지
+    textAlign: 'left',
+},
+nextButton: {
+    marginLeft: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: 'flex-end',
+},
 
 	settingsButton: {
 		position: 'absolute',

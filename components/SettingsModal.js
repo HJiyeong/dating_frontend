@@ -32,111 +32,139 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey })
 			}
 		}
 	}
-  return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
+    return (
+        <Modal visible={visible} style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center'}} transparent animationType="fade">
+
         <ImageBackground
-          source={require('../assets/images/clover_bg.png')}
-          style={styles.modalBox}
-          imageStyle={styles.imageBackgroundStyle}
+            source={require('../assets/images/Home.jpg')}   // 너가 깔고 싶은 배경 이미지
+            style={styles.backgroundImage}
         >
+            
+            <View
+                source={require('../assets/images/modal.jpg')}
+                style={styles.modalImage}
+                imageStyle={{ resizeMode: 'contain' }}
+            >
+                <View style={{alignItems:'center', width:'100%'}}>
 
-          <Text style={styles.title}>설정</Text>
+                <View style={styles.optionBox}>
+                    <Text style={styles.optionText}>배경음</Text>
+                    <Switch
+                        value={soundType == 'on'}
+                        onValueChange={handleSound}
+                        thumbColor={soundType == 'on' ? '#57582f86' : '#eee'}
+                        trackColor={{ true: '#a5a356ff', false: '#ccc' }}
+                    />
+                </View>
 
-          <View style={styles.buttonRow}>
-            <Text style={styles.buttonText}>🎵 배경음</Text>
-            <Switch
-              value={soundType == 'on'}
-              onValueChange={handleSound}
-              thumbColor={soundType == 'one' ? '#26A69A' : '#eee'}
-              trackColor={{ true: '#80CBC4', false: '#ccc' }}
-            />
-          </View>
-
-          <View style={styles.buttonRow}>
-            <Text style={styles.buttonText}>🔊 효과음</Text>
-            <Switch
-              value={effectType == 'on'}
-              onValueChange={handleEffect}
-              thumbColor={effectType == 'on' ? '#26A69A' : '#eee'}
-              trackColor={{ true: '#80CBC4', false: '#ccc' }}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>닫기</Text>
-          </TouchableOpacity>
-
+                {/* 효과음 박스 */}
+                <View style={styles.optionBox}>
+                    <Text style={styles.optionText}>효과음</Text>
+                    <Switch
+                        value={effectType == 'on'}
+                        onValueChange={handleEffect}
+                        thumbColor={effectType == 'on' ? '#57582f86' : '#eee'}
+                        trackColor={{ true: '#a5a356ff', false: '#ccc' }}
+                    />
+                </View>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                    <Text style={styles.closeButtonText}>닫기</Text>
+                </TouchableOpacity>
+                </View>
+            </View>
         </ImageBackground>
-      </View>
-    </Modal>
-  );
+        </Modal>
+    );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundImage: {
+    width:'100%',
+    height:'100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  modalBox: {
-    borderRadius: 20,
-    width: '100%',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.9)',
+},
+    modalImage: {
+        position: 'absolute',
+        width: 1000,  
+        height: 400,  
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor:'rgba(41, 29, 19, 0.8)',
 
-  },
-  imageBackgroundStyle: {
-    resizeMode: 'cover',
+    },
+
+    modalBox: {
+    width: 300,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     borderRadius: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',           // 설정 텍스트는 검정색
-    marginBottom: 24,
-  },
-  buttonRow: {
+    padding: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+
+
+    optionBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',   // 옵션 박스 투명 박스
+    borderRadius: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    marginVertical: 10,
+    width: '50%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '80%',
-    backgroundColor: '#1e4205',   // 더 진한 청록색 버튼
-    borderRadius: 15,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    marginVertical: 12,
-    elevation: 8,                 // 입체 효과
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  buttonText: {
-    fontSize: 17,
-    color: 'white',
+},
+
+optionText: {
+    fontFamily: 'myfont',
+    color: 'Black',
     fontWeight: 'bold',
-  },
-  closeButton: {
-    marginTop: 30,
-    backgroundColor: '#1e4205',   // 더 어두운 청록색
-    borderRadius: 15,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+    fontSize: 18,
+},
+
+
+
+
+    title: {
+        fontSize: 20,
+        color: 'white',
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+
+    button: {
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginVertical: 5,
+    },
+
+    buttonText: {
+        fontFamily: 'myfont',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 30,
+    },
+
+    closeButton: {
+        marginTop: 0,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        borderRadius: 10,
+        paddingVertical: 10,
+        alignItems:'center',
+        width: '50%',
+        paddingHorizontal: 30,
+    },
+
+    closeButtonText: {
+        fontFamily: 'myfont',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
 });
 
 export default SettingsModal;

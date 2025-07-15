@@ -68,6 +68,8 @@ const Main = ({navigation}) => {
 				<Button title="스탑" onPress={() => stopSound()} />
 				<Button title="시나리오" onPress={() => mutateGetTest()} /> */}
 				<Button title='내 작업 공간' onPress={() => navigation.navigate('Workspace')} />
+				<Button title='홈화면' onPress={() => navigation.navigate('Start')} />
+
 				{isCreate && 
 				<>
 					<TextInput
