@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import { TextInput, Button, Alert, Image } from 'react-native';
 import {useMutation} from '@tanstack/react-query'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth'
 import Container from '../../components/Container';
 import {playSignedUrl, stopSound} from '../../utils/sound'
 import axios from 'axios'
@@ -45,17 +44,14 @@ const Main = ({navigation}) => {
 		onSuccess:(data) => {
 			if(data.is_exist) mutateLogin({user_id: data.user_id})
 			else{
-		console.log(data)
 				setKakaoId(data.kakao_id)
 				setIsCreate(true)
 			}
 		}
 	})
-
 	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
-		onSuccess:(data) => {
-			console.log(data)
-			Auth.login(data.token)
+		onSuccess:async(data) => {
+			await Auth.login(data.token)
 		}
 	})
 	return (
@@ -68,9 +64,9 @@ const Main = ({navigation}) => {
 					resizeMode="contain"
 				/> */}
 				<Button title="카카오 로그인" onPress={signInWithKakao} />
-				<Button title="백그라운드 재생" onPress={() => playSignedUrl('')} />
+				{/* <Button title="백그라운드 재생" onPress={() => playSignedUrl('')} />
 				<Button title="스탑" onPress={() => stopSound()} />
-				<Button title="시나리오" onPress={() => mutateGetTest()} />
+				<Button title="시나리오" onPress={() => mutateGetTest()} /> */}
 				<Button title='내 작업 공간' onPress={() => navigation.navigate('Workspace')} />
 				{isCreate && 
 				<>

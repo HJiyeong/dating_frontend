@@ -49,9 +49,13 @@ function App() {
 			Orientation.unlockAllOrientations()
 		}
 	},[])
-	useEffect(() => {
-		const item = Auth.isLoggedIn()
+	const checkIsLoggedIn = async() => {
+
+		const item = await Auth.isLoggedIn()
 		if(!item) navigate("Loading")
+	}
+	useEffect(() => {
+		checkIsLoggedIn()
 	},[])
 	return (
 		<>

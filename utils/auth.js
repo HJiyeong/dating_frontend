@@ -1,4 +1,4 @@
-import jwt_decode from 'jwt-decode'
+import {jwtDecode} from 'jwt-decode'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ class Auth{
 	static async isLoggedIn(){
 		const token = await AsyncStorage.getItem('ainai-auth-token')
 		if(token){
-			const decoded = jwt_decode(token)
+			const decoded = jwtDecode(token)
 			if(decoded.exp * 1000 < Date.now()){
 				this.logout();
 			}
@@ -15,16 +15,22 @@ class Auth{
 		else return false
 	}
 	static async login(token){
-		const decoded = jwt_decode(token)
-		if(!decoded) throw new Error('invalid_token')
-		await AsyncStorage.setItem('ainai-auth-token', token);
-		await AsyncStorage.setItem('ainai-auth-name', decoded?.name);
-		axios.defaults.headers.common["authorization"] = 'Bearer ' + token;
+		try{
+
+			const decoded = jwtDecode(token)
+			if(!decoded) throw new Error('invalid_token')
+			await AsyncStorage.setItem('ainai-auth-token', token);
+			await AsyncStorage.setItem('ainai-auth-name', decoded?.name);
+		}
+		catch(e){
+			console.log(e)
+		}
+		// axios.defaults.headers.common["authorization"] = 'Bearer ' + token;
 	}
 	static async logout(){
 		await AsyncStorage.removeItem('ainai-auth-token')
 		await AsyncStorage.removeItem('ainai-auth-name')
-		axios.defaults.headers.common["authorization"] = ""
+		axios.defaults.headers.common["Authorization"] = ""
 	}
 	static async getToken(){
 		const token = await AsyncStorage.getItem('ainai-auth-token')

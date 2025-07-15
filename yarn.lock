@@ -7508,6 +7508,11 @@ react-native-screens@^4.11.1, "react-native-screens@>= 4.0.0":
     react-native-is-edge-to-edge "^1.1.7"
     warn-once "^0.1.0"
 
+react-native-sound-player@^0.14.5:
+  version "0.14.5"
+  resolved "https://registry.npmjs.org/react-native-sound-player/-/react-native-sound-player-0.14.5.tgz"
+  integrity sha512-/fCP91KNNCJ8RindTMERklLCbQ+Vjbd6aGY7ZX2W92mRNvAkbPCQ99PZkvYqJsC7VgUn18rxvGmneZbhb7LnxQ==
+
 react-native-sound@^0.11.2:
   version "0.11.2"
   resolved "https://registry.npmjs.org/react-native-sound/-/react-native-sound-0.11.2.tgz"

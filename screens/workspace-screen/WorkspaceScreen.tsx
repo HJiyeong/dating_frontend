@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Container from '../../components/Container';
 import useMutateGetImage from '../../hooks/mutation/useMutateGetImage'
@@ -7,21 +7,24 @@ import OverlayLoading from '../../components/OverlayLoading';
 import SettingsModal from '../../components/SettingsModal';
 import useMutateGetScenario from '../../hooks/mutation/useMutateGetScenario'
 import useMutateGetCurrentScenario from '../../hooks/mutation/useMutateGetCurrentScenario'
-const dialogList = [
-  '첫번쨰 대사',
-  '두번쨰 대사.',
-  '아아아아',
-];
-
-
-
+import useQueryGetImage from '../../hooks/query/useQueryGetImage'
+import useQueryGetAudio from '../../hooks/query/useQueryGetAudio'
+import {playSignedUrl, playQuoteAudio} from '../../utils/sound'
 const WorkspaceScreen = () => {
+	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
+	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
+	const indexRef = useRef(0);
   const [isCurrent, setIsCurrent] = useState(false)
   const [showModal, setShowModal] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
+  const [currentId, setCurrentId] = useState('')
+  const [dialogList, setDialogList] = useState([])
+  const [isAction, setIsAction] = useState(false)
   const [isTyping, setIsTyping] = useState(false);
-  const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
+  const [backgroundImageKey, setBackgroundImageKey] = useState('')
+  const [characterImageKey, setCharacterImageKey] = useState('')
+  const [backgroundSoundKey, setBackgroundSoundKey] = useState('')
+//   const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
 
   const {mutate: mutateGetImage, isLoading: loadingImage} = useMutateGetImage({
     onSuccess:(data) => {
@@ -36,56 +39,109 @@ const WorkspaceScreen = () => {
 })
   const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
     onSuccess:(data) => {
-      console.log(data)
+		console.log(data)
+	  if(data.scene.scenario[0].background_image_id) setBackgroundImageKey(data.scene.scenario[0].background_image_id)
+	  if(data.scene.scenario[0].not_character) setCharacterImageKey('')
+	  else if(data.scene.scenario[0].character_image_id) setCharacterImageKey(data.scene.scenario[0].character_image_id)
+	  if(data.scene.scenario[0].background_sound_id) setBackgroundSoundKey(data.scene.scenario[0].background_sound_id)
+	  setCurrentId(data.scene.scenario[0].id)
+	  setDialogList(data.scene.scenario)
     }
   })
-
+//   const {data: backgroundImage = '', isLoading, isFetching} = useQueryGetImage({
+// 	queryKey:['background_image', backgroundImageKey],
+// 	key: backgroundImageKey
+//   })
+//   const {data: characterImage = ''} = useQueryGetImage({
+// 	queryKey:['character_image', characterImageKey],
+// 	key: characterImageKey
+//   })
+//   const {data: backgroundSound = ''} = useQueryGetAudio({
+// 	queryKey:['background_sound', backgroundSoundKey],
+// 	key: backgroundSoundKey
+//   })
   useEffect(() => {
-    if (currentIndex >= dialogList.length) return;
+
+    const text = dialogList.find(e => e.id == currentId)?.script || '';
+	fullTextRef.current = text;
+	indexRef.current = 0
 
     setDisplayedText('');
     setIsTyping(true);
-
-    const text = dialogList[currentIndex];
-    let index = 0;
-
-    const interval = setInterval(() => {
-    if (index < text.length) {
-        const nextChar = text.charAt(index);   // 먼저 문자 추출
-        setDisplayedText((prev) => prev + nextChar);
-        index++; // 이걸 setState 바깥에서 나중에 증가시켜야 안정적
-    } else {
-        clearInterval(interval);
-        setIsTyping(false);
-    }
-    }, 100);
+    intervalRef.current = setInterval(() => {
+		if (indexRef.current < fullTextRef.current.length) {
+		  const nextChar = fullTextRef.current.charAt(indexRef.current);
+		  setDisplayedText((prev) => prev + nextChar);
+		  indexRef.current += 1;
+		} else {
+		  clearInterval(intervalRef.current);
+		  setIsTyping(false);
+		}
+	  }, 50); // 속도는 원하는 대로 조정
     
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  const handleNext = () => {
-    if (isTyping) return; // 타이핑 중일 땐 넘기기 방지
-    if (currentIndex < dialogList.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+	  return () => clearInterval(intervalRef.current);
+  }, [currentId]);
+  const skipTyping = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      setDisplayedText(fullTextRef.current);
+      setIsTyping(false);
     }
   };
+  const handleNext = () => {
+	if(isTyping){
+		skipTyping()
+		return;
+	}
+    if (isAction) return; // 타이핑 중일 땐 넘기기 방지
+	const currentIndex = dialogList.findIndex(e => e.id == currentId)
+    if (currentIndex < dialogList.length - 1) {
+		const tmp = dialogList[currentIndex + 1]
+		if(tmp.background_image_id) setBackgroundImageKey(tmp.background_image_id)
+		if(tmp.not_character) setCharacterImageKey('')
+		else if(tmp.character_image_id) setCharacterImageKey(tmp.character_image_id)
+		if(tmp.background_sound_id) setBackgroundSoundKey(tmp.background_sound_id)
+		if(tmp.effect_sound_id) playQuoteAudio(tmp.effect_sound_id)
+		if(tmp.character_action_image_id){
+			setIsAction(true)
+			const originalKey = characterImageKey;
+			setTimeout(() => {
+				setCharacterImageKey(tmp.character_action_image_id)
+				if(tmp.is_re_image){
+					setTimeout(() => {
+						setCharacterImageKey(originalKey)
+						setIsAction(false)
+					}, 1000)
+				}
+				else setIsAction(false)
+			}, 1000)
+		}
+      	setCurrentId(dialogList[currentIndex + 1].id)
+    }
+  };//where, when, options 필요
 
     const handleChangeImage = () => {
-      if(isCurrent) setCharacterImage(require('../../assets/images/456.png'));
-      else setCharacterImage(require('../../assets/images/789.png'));  // 이미지 변경
-      setIsCurrent(!isCurrent)
-  };
-  useEffect(() => {
-    mutateGetCurrentScenario({})
-  },[])
+		if(isCurrent) setCharacterImage(require('../../assets/images/456.png'));
+		else setCharacterImage(require('../../assets/images/789.png'));  // 이미지 변경
+		setIsCurrent(!isCurrent)
+	};
+	useEffect(() => {
+		if(backgroundSoundKey){
+			playSignedUrl(backgroundSoundKey)
+		}
+	},[backgroundSoundKey])
+	useEffect(() => {
+		mutateGetCurrentScenario({})
+	},[])
 
   return (
     <ImageBackground
-      source={require('../../assets/images/background2.png')}
+      source={{uri: backgroundImageKey}}
+    //   source={require('../../assets/images/background2.png')}
       style={{ flex: 1 }}
     >
-      {loadingAudio && <OverlayLoading/>}
+      {(loadingAudio || loadingScenario) && <OverlayLoading/>}
       <Container style={styles.overlay}>
 
         <TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
@@ -93,11 +149,12 @@ const WorkspaceScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.characterContainer}>
-          <Image
-            source={characterImage}
+          {characterImageKey && 
+		  <Image
+            source={{uri: characterImageKey}}
             style={styles.characterImage}
             resizeMode="contain"
-          />
+          />}
         </View>
 
         <View style={styles.dialogBox}>
@@ -111,9 +168,9 @@ const WorkspaceScreen = () => {
             <Text style={{ color: 'white' }}>▶</Text>
           </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
+        {/* <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
           <Text style={{ color: 'white' }}>이미지 변경</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
 
         </View>
@@ -134,14 +191,14 @@ const styles = StyleSheet.create({
   characterContainer: {
     position: 'absolute',
     bottom: 0,
-    right: 0,
+    right: 100,
     paddingRight: 24,
     zIndex: 1,  
   },
 
   characterImage: {
-    width: 300,
-    height: 400,
+    width: 270,//300
+    height: 360,//400
   },
 
   dialogBox: {

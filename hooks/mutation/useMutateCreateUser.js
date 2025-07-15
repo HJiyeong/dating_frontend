@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios from 'axios'
 import url from '../../utils/backend'
 const createUser = async({kakao_id, name}) => {
-	console.log(kakao_id, name)
 	const res = await axios.put(url + '/user/create', {
 		kakao_id, name
 	})
