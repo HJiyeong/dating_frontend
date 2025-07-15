@@ -10,7 +10,7 @@ import axios from 'axios'
 import url from '../../utils/backend'
 import useMutateGetTest from '../../hooks/mutation/useMutateGetTest'
 import useMutateLogin from '../../hooks/mutation/useMutateLogin'
-import useMutateCheckExist from '../../hooks/mutation/useMutateGetImage'
+import useMutateCheckExist from '../../hooks/mutation/useMutateCheckExist'
 import useMutateCreateUser from '../../hooks/mutation/useMutateCreateUser'
 import Auth from '../../utils/auth'
 import OverlayLoading from '../../components/OverlayLoading'
@@ -45,6 +45,7 @@ const Main = ({navigation}) => {
 		onSuccess:(data) => {
 			if(data.is_exist) mutateLogin({user_id: data.user_id})
 			else{
+		console.log(data)
 				setKakaoId(data.kakao_id)
 				setIsCreate(true)
 			}
@@ -53,6 +54,7 @@ const Main = ({navigation}) => {
 
 	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
 		onSuccess:(data) => {
+			console.log(data)
 			Auth.login(data.token)
 		}
 	})

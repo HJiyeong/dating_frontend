@@ -19,11 +19,12 @@ class Auth{
 		if(!decoded) throw new Error('invalid_token')
 		await AsyncStorage.setItem('ainai-auth-token', token);
 		await AsyncStorage.setItem('ainai-auth-name', decoded?.name);
+		axios.defaults.headers.common["authorization"] = 'Bearer ' + token;
 	}
 	static async logout(){
 		await AsyncStorage.removeItem('ainai-auth-token')
 		await AsyncStorage.removeItem('ainai-auth-name')
-		axios.defaults.headers.common["Authorization"] = ""
+		axios.defaults.headers.common["authorization"] = ""
 	}
 	static async getToken(){
 		const token = await AsyncStorage.getItem('ainai-auth-token')

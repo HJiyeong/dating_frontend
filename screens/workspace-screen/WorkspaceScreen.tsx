@@ -5,7 +5,8 @@ import useMutateGetImage from '../../hooks/mutation/useMutateGetImage'
 import useMutateGetAudio from '../../hooks/mutation/useMutateGetAudio'
 import OverlayLoading from '../../components/OverlayLoading';
 import SettingsModal from '../../components/SettingsModal';
-
+import useMutateGetScenario from '../../hooks/mutation/useMutateGetScenario'
+import useMutateGetCurrentScenario from '../../hooks/mutation/useMutateGetCurrentScenario'
 const dialogList = [
   '첫번쨰 대사',
   '두번쨰 대사.',
@@ -33,7 +34,11 @@ const WorkspaceScreen = () => {
     console.log(data.url)
   }
 })
-
+  const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
+    onSuccess:(data) => {
+      console.log(data)
+    }
+  })
 
   useEffect(() => {
     if (currentIndex >= dialogList.length) return;
@@ -54,7 +59,7 @@ const WorkspaceScreen = () => {
         setIsTyping(false);
     }
     }, 100);
-
+    
 
     return () => clearInterval(interval);
   }, [currentIndex]);
@@ -67,15 +72,17 @@ const WorkspaceScreen = () => {
   };
 
     const handleChangeImage = () => {
-      if(isCurrent) setCharacterImage(require('../../assets/images/123.png'));
-      else setCharacterImage(require('../../assets/images/ex2.png'));  // 이미지 변경
+      if(isCurrent) setCharacterImage(require('../../assets/images/456.png'));
+      else setCharacterImage(require('../../assets/images/789.png'));  // 이미지 변경
       setIsCurrent(!isCurrent)
   };
-
+  useEffect(() => {
+    mutateGetCurrentScenario({})
+  },[])
 
   return (
     <ImageBackground
-      source={require('../../assets/images/background.png')}
+      source={require('../../assets/images/background2.png')}
       style={{ flex: 1 }}
     >
       {loadingAudio && <OverlayLoading/>}

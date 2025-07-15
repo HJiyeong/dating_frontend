@@ -1,17 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from 'axios'
 import url from '../../utils/backend'
-const createUser = async({kakao_id, name}) => {
-	console.log(kakao_id, name)
-	const res = await axios.put(url + '/user/create', {
-		kakao_id, name
-	})
+const getScenario = async({id}) => {
+	const res = await axios.get(url + '/scene/' + id  );
 	return res.data
 }
-const useMutateCreateUser = ({onSuccess}) => {
+const useMutateGetScenario = ({onSuccess}) => {
 	
 	return useMutation({
-		mutationFn: createUser,
+		mutationFn: getScenario,
         onSuccess:(data) => {
 			if(onSuccess) onSuccess(data)
         },
@@ -20,4 +17,4 @@ const useMutateCreateUser = ({onSuccess}) => {
 		}
     })
 }
-export default useMutateCreateUser
+export default useMutateGetScenario
