@@ -48,6 +48,13 @@ export const playQuoteAudio = (key) => {
 		console.log('오디오 재생 오류:', e);
 	}
 };
+export const stopQuoteAudio = () => {
+	try {
+	  SoundPlayer.stop();
+	} catch (e) {
+	  console.log('오디오 정지 오류:', e);
+	}
+  };
 const effectList = {
 	keyboard: 'keyboard'
 }

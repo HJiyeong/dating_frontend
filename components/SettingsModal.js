@@ -1,7 +1,37 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, ImageBackground, Switch } from 'react-native';
-
-const SettingsModal = ({ visible, onClose, bgmEnabled, onToggleBgm, sfxEnabled, onToggleSfx }) => {
+import { stopSound, playSignedUrl, playQuoteAudio, stopQuoteAudio } from '../utils/sound';
+import effectTypeZustand from '../store/effectType'
+import soundTypeZustand from '../store/soundType'
+const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey }) => {
+	const effectType = effectTypeZustand(state => state.effectType)
+	const setEffectType = effectTypeZustand(state => state.setEffectType)
+	const soundType = soundTypeZustand(state => state.soundType)
+	const setSoundType = soundTypeZustand(state => state.setSoundType)
+	const handleSound = () => {
+		if(soundType == 'on'){
+			setSoundType('off')
+			stopSound()
+		}
+		else{
+			setSoundType('on')
+			if(backgroundSoundKey){
+				playSignedUrl(backgroundSoundKey)
+			}
+		}
+	}
+	const handleEffect = () => {
+		if(effectType == 'on'){
+			setEffectType('off')
+			stopQuoteAudio()
+		}
+		else{
+			setEffectType('on')
+			if(effectSoundKey){
+				playQuoteAudio(effectSoundKey)
+			}
+		}
+	}
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -16,9 +46,9 @@ const SettingsModal = ({ visible, onClose, bgmEnabled, onToggleBgm, sfxEnabled, 
           <View style={styles.buttonRow}>
             <Text style={styles.buttonText}>🎵 배경음</Text>
             <Switch
-              value={bgmEnabled}
-              onValueChange={onToggleBgm}
-              thumbColor={bgmEnabled ? '#26A69A' : '#eee'}
+              value={soundType == 'on'}
+              onValueChange={handleSound}
+              thumbColor={soundType == 'one' ? '#26A69A' : '#eee'}
               trackColor={{ true: '#80CBC4', false: '#ccc' }}
             />
           </View>
@@ -26,9 +56,9 @@ const SettingsModal = ({ visible, onClose, bgmEnabled, onToggleBgm, sfxEnabled, 
           <View style={styles.buttonRow}>
             <Text style={styles.buttonText}>🔊 효과음</Text>
             <Switch
-              value={sfxEnabled}
-              onValueChange={onToggleSfx}
-              thumbColor={sfxEnabled ? '#26A69A' : '#eee'}
+              value={effectType == 'on'}
+              onValueChange={handleEffect}
+              thumbColor={effectType == 'on' ? '#26A69A' : '#eee'}
               trackColor={{ true: '#80CBC4', false: '#ccc' }}
             />
           </View>

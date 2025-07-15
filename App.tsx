@@ -50,7 +50,6 @@ function App() {
 		}
 	},[])
 	const checkIsLoggedIn = async() => {
-
 		const item = await Auth.isLoggedIn()
 		if(!item) navigate("Loading")
 	}
