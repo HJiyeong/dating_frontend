@@ -130,6 +130,7 @@ const WorkspaceScreen = ({navigation}) => {
 		}
 	};
 	const handleNext = () => {
+		return;
 		if(isTyping){
 			skipTyping()
 			return;
@@ -141,11 +142,11 @@ const WorkspaceScreen = ({navigation}) => {
 			if(tmp.background_image_id) setBackgroundImageKey(tmp.background_image_id)
 			if(tmp.not_character) setCharacterImageKey('')
 			else if(tmp.character_image_id){
-        setCharacterImageKey(tmp.character_image_id)
-        setTimeout(() => {
-          animateCharacter()
-        },300)
-      }
+				setCharacterImageKey(tmp.character_image_id)
+				setTimeout(() => {
+				animateCharacter()
+				},300)
+			}
 			if(tmp.background_sound_id) setBackgroundSoundKey(tmp.background_sound_id)
 			if(tmp.effect_sound_id) setEffectSoundKey(tmp.effect_sound_id)
 			else setEffectSoundKey('')
@@ -163,6 +164,7 @@ const WorkspaceScreen = ({navigation}) => {
 			setCurrentId(dialogList[currentIndex + 1].id)
 		}
 		else if(currentIndex == (dialogList.length - 1)){
+			console.log(123)
 			mutateGetScenario({id: nextSceneId})
 		}
 	};//where, when, options 필요
@@ -197,52 +199,61 @@ const WorkspaceScreen = ({navigation}) => {
 
 	return (
 		<ImageBackground
-		source={{uri: backgroundImageKey}}
-		//   source={require('../../assets/images/background2.png')}
-		style={{ flex: 1 }}
+			source={{uri: backgroundImageKey}}
+			//   source={require('../../assets/images/background2.png')}
+			style={{ flex: 1 }}
 		>
-		{(loadingAudio || loadingScenario) && <OverlayLoading/>}
-		<Container style={styles.overlay}>
-			<TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
-			<Text style={styles.settingsText}>⚙️</Text>
-			</TouchableOpacity>
+			{(loadingAudio || loadingScenario) && <OverlayLoading/>}
+			<Container style={styles.overlay}>
+				<TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
+					<Text style={styles.settingsText}>⚙️</Text>
+				</TouchableOpacity>
 
-			<View style={styles.characterContainer}>
-        <Animated.View style={{ transform: [{ translateX }] }}>
-			{characterImageKey && 
-			<Image
-				source={{uri: characterImageKey}}
-				style={styles.characterImage}
-				resizeMode="contain"
-			/>}
-      </Animated.View>
-			</View>
+				<View style={styles.characterContainer}>
+					<Animated.View style={{ transform: [{ translateX }] }}>
+						{characterImageKey && 
+						<Image
+							source={{uri: characterImageKey}}
+							style={styles.characterImage}
+							resizeMode="contain"
+						/>}
+					</Animated.View>
+				</View>
 
-<TouchableOpacity onPress={handleNext} activeOpacity={1} style={styles.dialogBox}>
+				<TouchableOpacity onPress={handleNext} activeOpacity={1} style={styles.dialogBox}>
+					<View style={{ flex: 1, position:'relative', }}>
+						{/* <View style={{position:'absolute', right:-50, top:-100, height:50, width:100}}>
+							<View style={{height:30,backgroundColor:'rgba(0,0,0,0.6)'}}>
+								<Text style={{color:'#fff'}}>선택지 1</Text>
+							</View>
+							<View style={{height:30,backgroundColor:'rgba(0,0,0,0.6)'}}>
+								<Text style={{color:'#fff'}}>선택지 1</Text>
+							</View>
+							<View style={{height:30,backgroundColor:'rgba(0,0,0,0.6)'}}>
+								<Text style={{color:'#fff'}}>선택지 1</Text>
+							</View>
+							<View style={{height:30,backgroundColor:'rgba(0,0,0,0.6)'}}>
+								<Text style={{color:'#fff'}}>선택지 1</Text>
+							</View>
+						</View> */}
+						<View style={styles.nameBox}>
+							<Text style={styles.nameText}>이름</Text>
+						</View>
+						<Text style={styles.dialogText}>{displayedText}</Text>
+					</View>
+					<View style={styles.nextButtonContainer}>
+						<Text style={styles.nextButton}>▶</Text>
+					</View>
+				</TouchableOpacity>
 
-    <View style={{ flex: 1 }}>
-        <View style={styles.nameBox}>
-            <Text style={styles.nameText}>이름</Text>
-        </View>
-
-        <Text style={styles.dialogText}>{displayedText}</Text>
-    </View>
-
-    <View style={styles.nextButtonContainer}>
-        <Text style={styles.nextButton}>▶</Text>
-    </View>
-
-</TouchableOpacity>
-
-			{/* <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
-			<Text style={{ color: 'white' }}>이미지 변경</Text>
-			</TouchableOpacity> */}
+				{/* <TouchableOpacity onPress={handleChangeImage} style={[styles.nextButton, { marginTop: 8 }]}>
+				<Text style={{ color: 'white' }}>이미지 변경</Text>
+				</TouchableOpacity> */}
 
 
 
-		</Container>
-		<SettingsModal visible={showModal} backgroundSoundKey={backgroundSoundKey} effectSoundKey={effectSoundKey} onClose={() => setShowModal(false)} />
-
+			</Container>
+			<SettingsModal visible={showModal} backgroundSoundKey={backgroundSoundKey} effectSoundKey={effectSoundKey} onClose={() => setShowModal(false)} />
 		</ImageBackground>
 	);
 };

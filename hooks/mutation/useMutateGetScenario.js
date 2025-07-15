@@ -2,7 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import axios from 'axios'
 import url from '../../utils/backend'
 const getScenario = async({id}) => {
-	const res = await axios.get(url + '/scene/' + id  );
+	console.log(id, 333)
+	const res = await axios.get(url + '/scenario/' + id  );
 	return res.data
 }
 const useMutateGetScenario = ({onSuccess}) => {
