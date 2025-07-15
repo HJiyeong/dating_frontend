@@ -21,6 +21,7 @@ const WorkspaceScreen = ({navigation}) => {
 	const [showModal, setShowModal] = useState(false);
 	const [displayedText, setDisplayedText] = useState('');
 	const [currentId, setCurrentId] = useState('')
+	const [nextSceneId, setNextSceneId] = useState('')
 	const [dialogList, setDialogList] = useState([])
 	const [isAction, setIsAction] = useState(false)
 	const [isTyping, setIsTyping] = useState(false);
@@ -66,15 +67,25 @@ const WorkspaceScreen = ({navigation}) => {
 			console.log(data.url)
 		}
 	})
-	const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
-		onSuccess:(data) => {
-			console.log(data)
+	const handleSetScene = (data) => {
 		if(data.scene.scenario[0].background_image_id) setBackgroundImageKey(data.scene.scenario[0].background_image_id)
 		if(data.scene.scenario[0].not_character) setCharacterImageKey('')
 		else if(data.scene.scenario[0].character_image_id) setCharacterImageKey(data.scene.scenario[0].character_image_id)
 		if(data.scene.scenario[0].background_sound_id) setBackgroundSoundKey(data.scene.scenario[0].background_sound_id)
+		setNextSceneId(data.scene.next_scene_id)
 		setCurrentId(data.scene.scenario[0].id)
 		setDialogList(data.scene.scenario)
+	}
+    const {mutate: mutateGetScenario, isLoading: loadingScene} = useMutateGetScenario({
+		onSuccess:(data) => {
+			console.log(data)
+			handleSetScene(data)
+		}
+	})
+	const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
+		onSuccess:(data) => {
+			console.log(data)
+			handleSetScene(data)
 		}
 	})
 //   const {data: backgroundImage = '', isLoading, isFetching} = useQueryGetImage({
@@ -150,6 +161,9 @@ const WorkspaceScreen = ({navigation}) => {
 				else setIsAction(false)
 			}
 			setCurrentId(dialogList[currentIndex + 1].id)
+		}
+		else if(currentIndex == (dialogList.length - 1)){
+			mutateGetScenario({id: nextSceneId})
 		}
 	};//where, when, options 필요
 
