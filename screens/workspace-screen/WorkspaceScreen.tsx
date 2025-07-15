@@ -112,13 +112,12 @@ const WorkspaceScreen = ({navigation}) => {
 			else setEffectSoundKey('')
 			if(tmp.character_action_image_id){
 				setIsAction(true)
-				const originalKey = characterImageKey;
 				setCharacterImageKey(tmp.character_action_image_id)
-				if(tmp.is_re_image){
+				if(tmp.character_re_image_id){
 					setTimeout(() => {
-						setCharacterImageKey(originalKey)
+						setCharacterImageKey(tmp.character_re_image_id)
 						setIsAction(false)
-					}, 1000)
+					}, 1500)
 				}
 				else setIsAction(false)
 			}
