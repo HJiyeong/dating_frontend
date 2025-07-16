@@ -163,7 +163,11 @@ const WorkspaceScreen = ({navigation}) => {
 
 	const handleSetScene = (data) => {
 		const doc = {}
-		if(data.scene.scenario[0].where && data.scene.scenario[0].when) doc.info = data.scene.scenario[0].when + ', ' + data.scene.scenario[0].where
+		doc.where = data.scene.scenario[0].where || ''
+		doc.when = data.scene.scenario[0].where || ''
+		if(doc.where && doc.when){
+			handleDateInfo(doc.when + ', ' + doc.where)
+		}
 		if(data.scene.scenario[0].background_image_id) doc.background_image_id = data.scene.scenario[0].background_image_id
 		if(data.scene.scenario[0].not_character) doc.character_image_id = ''
 		else if(data.scene.scenario[0].character_image_id) doc.character_image_id = data.scene.scenario[0].character_image_id
@@ -277,6 +281,15 @@ const WorkspaceScreen = ({navigation}) => {
 			setScoreList([])
 		}
 	})
+	const handleDateInfo = (info) => {
+		if (!info) return;
+		setVisibleText(info); // 글자 띄우기
+		const timer = setTimeout(() => {
+			setVisibleText(''); // 일정 시간 후 사라지게
+		  }, 3000); // 2초 표시
+	  
+		  return () => clearTimeout(timer); // cleanup
+	}
 	const handleNext = () => {
 		if(isTyping){
 			skipTyping()
@@ -288,10 +301,9 @@ const WorkspaceScreen = ({navigation}) => {
 		if (currentIndex < dialogList.length - 1) {
 			const tmp = dialogList[currentIndex + 1]
 			const doc = {...item}
-			if(tmp.where && tmp.when) doc.info = tmp.when + ', ' + tmp.where
-			else if(tmp.where && doc.when) doc.info = doc.when + ', ' + tmp.where
-			else if(tmp.when && doc.where) doc.info = tmp.when + ', ' + doc.where
-			else doc.info = ''
+			if(tmp.where) doc.where = tmp.where
+			if(tmp.when) doc.when = tmp.when
+			if(doc.where && doc.when) handleDateInfo(doc.when + ', ' + doc.where)
 			if(tmp.background_image_id) doc.background_image_id = tmp.background_image_id
 			if(tmp.not_character) doc.character_image_id = ''
 			else if(tmp.character_image_id){
@@ -320,9 +332,11 @@ const WorkspaceScreen = ({navigation}) => {
 			doc.current_id = dialogList[currentIndex + 1].id
 			// setCurrentId(dialogList[currentIndex + 1].id)
 			setItem(doc)
-			setTimeout(() => {
-				animateCharacter()
-			},300)
+			if(tmp.character_image_id || tmp.second_character_image_id){
+				setTimeout(() => {
+					animateCharacter()
+				},300)
+			}
 			if(tmp.character_re_image_id){
 				setTimeout(() => {
 					// setCharacterImageKey(tmp.character_re_image_id)
@@ -343,16 +357,16 @@ const WorkspaceScreen = ({navigation}) => {
 	// 	else setCharacterImage(require('../../assets/images/789.png'));  // 이미지 변경
 	// 	setIsCurrent(!isCurrent)
 	// };
-	useEffect(() => {
-		if (!item.info) return;
+	// useEffect(() => {
+	// 	if (!item.info) return;
 	
-		setVisibleText(item.info); // 글자 띄우기
-		const timer = setTimeout(() => {
-			setVisibleText(''); // 일정 시간 후 사라지게
-		  }, 3000); // 2초 표시
+	// 	setVisibleText(item.info); // 글자 띄우기
+	// 	const timer = setTimeout(() => {
+	// 		setVisibleText(''); // 일정 시간 후 사라지게
+	// 	  }, 3000); // 2초 표시
 	  
-		  return () => clearTimeout(timer); // cleanup
-	},[item.info])
+	// 	  return () => clearTimeout(timer); // cleanup
+	// },[item.info])
 	useEffect(() => {
 		if(item.background_sound_id){
 			if(soundType == 'on') playSignedUrl(item.background_sound_id)

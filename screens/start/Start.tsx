@@ -5,6 +5,7 @@ import OverlayLoading from '../../components/OverlayLoading';
 import useMutateLogin from '../../hooks/mutation/useMutateLogin'
 import useMutateCheckExist from '../../hooks/mutation/useMutateCheckExist'
 import useMutateCreateUser from '../../hooks/mutation/useMutateCreateUser'
+import OverlayLoading2 from '../../components/OverlayLoading2';
 import {
 	KakaoOAuthToken,
 	KakaoProfile,
@@ -37,7 +38,6 @@ const Start = ({navigation}) => {
 		mutateCheckExistNew({kakao_id: profile.id})
 	};
 	const handleCreate = () => {
-		console.log(1234123123)
 		if(!name){
 			Alert.alert('이름 없음', '이름을 입력해주세요.')
 		}
@@ -73,6 +73,7 @@ const Start = ({navigation}) => {
 	})
 	return (
 		<View style={styles.container}>
+			{(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) && <OverlayLoading2/>}
 		<Image
 			source={require('../../assets/images/Home.jpg')}
 			style={styles.image}
@@ -84,6 +85,7 @@ const Start = ({navigation}) => {
 					<TextInput
 						style={{height:40,fontSize: 14, width:'100%', backgroundColor:'#fff' }}
 						maxLength={10}
+						onBlur={() => setIsCreate(false)}
 						placeholder="이름을 입력해주세요"
 						value={name}
 						onChangeText={setName}
