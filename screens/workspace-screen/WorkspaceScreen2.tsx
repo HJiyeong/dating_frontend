@@ -89,6 +89,12 @@ export const characterHeadImageObject = {
 	'nubzuki_head.png': require('../../assets/images/head/nubzuki_head.png'),
 	'seoyeon_head.png': require('../../assets/images/head/seoyeon_head.png'),
 }
+
+const chapter1Event1 = ''
+const chapter1Event4 = ''
+const chapter2Event3 = ''
+const chapter3Event4 = ''
+const chapter4Event1 = ''
 const WorkspaceScreen = ({navigation}) => {
 	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
 	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
@@ -389,11 +395,11 @@ const WorkspaceScreen = ({navigation}) => {
 		}
 		else stopQuoteAudio()
 	},[item.effect_sound_id, isChangeEffect])
-
 	useEffect(() => {
 		setJustLoading(true)
 		mutateGetCurrentScenario({})
 		mutateGetCharacter({})
+		
 		// mutateGetScenario({id: '68778a26151f8e3e7afd1b24'})
 	},[])
 	const checkIsLoggedIn = async() => {

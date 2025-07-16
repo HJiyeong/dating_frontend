@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, ImageBackground } from 'react-native';
 
-import useQueryGetAudio from '../../hooks/query/useQueryGetAudio'
-import {playSignedUrl, playQuoteAudio, stopQuoteAudio, stopSound} from '../../utils/sound'
 const { width, height } = Dimensions.get('window');
 
 const characters = [
@@ -54,16 +52,6 @@ const Detail = ({navigation}) => {
   const character = characters[currentIndex];
   const isEven = currentIndex % 2 === 0;
 
-  const {data: backgroundSound = ''} = useQueryGetAudio({
-	queryKey:['background_sound', 'background_basic1.mp3'],
-	key: 'background_basic1.mp3'
-	  })
-	useEffect(() => {
-		if(backgroundSound){
-			playSignedUrl(backgroundSound)
-		}
-		else stopSound()
-	},[backgroundSound])
   useEffect(() => {
     startEntranceAnimation();
   }, [currentIndex]);
@@ -102,6 +90,7 @@ const Detail = ({navigation}) => {
         setCurrentIndex(currentIndex + 1);
       } else {
         navigation.navigate('Workspace')
+        // setCurrentIndex(0);
       }
     });
   };
