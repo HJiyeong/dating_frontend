@@ -7,12 +7,12 @@
 import {useEffect} from 'react'
 import Orientation from 'react-native-orientation-locker'
 import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { StatusBar, StyleSheet, Alert, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './screens/loading/Loading'
 import MainScreen from './screens/main/Main'
-import WorkspaceScreen from './screens/workspace-screen/WorkspaceScreen';
+import WorkspaceScreen from './screens/workspace-screen/WorkspaceScreen2';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Auth from './utils/auth'
@@ -52,7 +52,10 @@ function App() {
 	},[])
 	const checkIsLoggedIn = async() => {
 		const item = await Auth.isLoggedIn()
-		if(!item) navigate("Loading")
+		if(!item){
+			Alert.alert('로그인 필요', '시작화면으로 이동합니다.')
+			navigate("Loading")
+		}
 	}
 	useEffect(() => {
 		checkIsLoggedIn()

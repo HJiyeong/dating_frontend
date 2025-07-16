@@ -1,13 +1,17 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, ImageBackground, Switch } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, ImageBackground, Switch, Pressable } from 'react-native';
 import { stopSound, playSignedUrl, playQuoteAudio, stopQuoteAudio } from '../utils/sound';
 import effectTypeZustand from '../store/effectType'
 import soundTypeZustand from '../store/soundType'
-const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey }) => {
+import voiceTypeZustand from '../store/voiceType'
+import Auth from '../utils/auth'
+const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey, navigation }) => {
 	const effectType = effectTypeZustand(state => state.effectType)
 	const setEffectType = effectTypeZustand(state => state.setEffectType)
 	const soundType = soundTypeZustand(state => state.soundType)
 	const setSoundType = soundTypeZustand(state => state.setSoundType)
+	const voiceType = voiceTypeZustand(state => state.voiceType)
+	const setVocieType = voiceTypeZustand(state => state.setVoiceType)
 	const handleSound = () => {
 		if(soundType == 'on'){
 			setSoundType('off')
@@ -18,6 +22,18 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey })
 			if(backgroundSoundKey){
 				playSignedUrl(backgroundSoundKey)
 			}
+		}
+	}
+	const handleVoice = () => {
+		if(voiceType == 'on'){
+			setVocieType('off')
+			// stopSound()
+		}
+		else{
+			setVocieType('on')
+			// if(backgroundSoundKey){
+			// 	playSignedUrl(backgroundSoundKey)
+			// }
 		}
 	}
 	const handleEffect = () => {
@@ -40,14 +56,15 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey })
             style={styles.backgroundImage}
         >
             
-            <View
+            <Pressable
+				onPress={() => onClose()}
                 source={require('../assets/images/modal.jpg')}
                 style={styles.modalImage}
                 imageStyle={{ resizeMode: 'contain' }}
             >
                 <View style={{alignItems:'center', width:'100%'}}>
 
-                <View style={styles.optionBox}>
+                <View style={styles.optionBox} onStartShouldSetResponder={() => true}>
                     <Text style={styles.optionText}>배경음</Text>
                     <Switch
                         value={soundType == 'on'}
@@ -58,7 +75,7 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey })
                 </View>
 
                 {/* 효과음 박스 */}
-                <View style={styles.optionBox}>
+                <View style={styles.optionBox} onStartShouldSetResponder={() => true}>
                     <Text style={styles.optionText}>효과음</Text>
                     <Switch
                         value={effectType == 'on'}
@@ -67,11 +84,29 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey })
                         trackColor={{ true: '#a5a356ff', false: '#ccc' }}
                     />
                 </View>
-                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                    <Text style={styles.closeButtonText}>닫기</Text>
+                <View style={styles.optionBox} onStartShouldSetResponder={() => true}>
+                    <Text style={styles.optionText}>Ai 보이스</Text>
+                    <Switch
+                        value={voiceType == 'on'}
+                        onValueChange={handleVoice}
+                        thumbColor={voiceType == 'on' ? '#57582f86' : '#eee'}
+                        trackColor={{ true: '#a5a356ff', false: '#ccc' }}
+                    />
+                </View>
+                {/* <View style={{...styles.optionBox, alignItems:'center', justifyContent:'center'}}>
+                    <Text style={{...styles.optionText, color:'#dc4a43'}}>로그아웃</Text>
+                </View> */}
+                <TouchableOpacity 
+					style={styles.closeButton} 
+					onPress={async() => {
+						await Auth.logout()
+						navigation.navigate('Main')
+					}}
+				>
+                    <Text style={styles.closeButtonText}>로그아웃</Text>
                 </TouchableOpacity>
                 </View>
-            </View>
+            </Pressable>
         </ImageBackground>
         </Modal>
     );

@@ -44,6 +44,7 @@ export const playQuoteAudio = (key) => {
 	const name = effectList[key]
 	try {
 		SoundPlayer.playSoundFile(name, 'mp3'); // '파일명', '확장자'
+
 	} catch (e) {
 		console.log('오디오 재생 오류:', e);
 	}
@@ -56,5 +57,13 @@ export const stopQuoteAudio = () => {
 	}
   };
 const effectList = {
-	keyboard: 'keyboard'
+	keyboard: 'keyboard',
+	camera:'camera', // 찰칵
+	kakao_talk:'kakao_talk',
+	bicycle:'bicycle', // 끼이이익
+	foot_walk:'foot_walk', //터벅터벅
+	heart_beat:'heart_beat', // 심장 두근대는
+	wind:'wind', // 바람소리
+	cheers:'cheers', // 짠소리
+
 }
