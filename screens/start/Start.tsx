@@ -21,15 +21,14 @@ const Start = ({navigation}) => {
 	const [kakaoId, setKakaoId] = useState('')
 	const handleLoadGame = async (): Promise<void> => {
 		if(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) return;
-		const isLoggedIn = await Auth.isLoggedIn()
-		if(isLoggedIn){
-			navigation.navigate('Workspace')
-		}
-		else{
+		// const isLoggedIn = await Auth.isLoggedIn()
+		// if(isLoggedIn){
+		// 	navigation.navigate('Workspace')
+		// }
+		// else{
 			const token: KakaoOAuthToken = await login();
 			const profile: KakaoProfile = await getProfile();
 			mutateCheckExist({kakao_id: profile.id})
-		}
 	};
 	const handleNewGame = async (): Promise<void> => {
 		if(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) return;
@@ -58,6 +57,7 @@ const Start = ({navigation}) => {
 	})
 	const {mutate: mutateCheckExist, isLoading: loadingCheck} = useMutateCheckExist({
 		onSuccess:(data) => {
+            console.log(data, 111)
 			if(data.is_exist) mutateLogin({user_id: data.user_id})
 			else{
 				Alert.alert('계정 없음', 'New Game으로 시작해주세요.')
@@ -96,6 +96,7 @@ const Start = ({navigation}) => {
 					<Button title="새 게임 시작하기" onPress={handleCreate} />
 				</View>
 		:	<>
+        <View style={{position:'absolute', bottom:20, alignItems:'center', width:'100%', flexDirection:"row", justifyContent:'center'}}>
 			<TouchableOpacity onPress={handleNewGame} style={styles.button}>
 				<Image
 					source={require('../../assets/images/new_game.png')}  
@@ -110,6 +111,7 @@ const Start = ({navigation}) => {
 					resizeMode="contain"
 				/>
 			</TouchableOpacity>
+        </View>
 			</>		
 		}
 		</View>
@@ -126,16 +128,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   button: {
-    position: 'absolute',
-    bottom: 20, 
-    left: 250,   
-    alignSelf: 'center'
+    alignItems: 'center',
+    justifyContent:'center',
   },
     button2: {
-    position: 'absolute',
-    bottom: 20,    
-    right: 250,
-    alignSelf: 'center'
+    alignItems: 'center',
+    justifyContent:'center',
   },
   text: {
     color: 'white',
