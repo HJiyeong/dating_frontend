@@ -164,7 +164,7 @@ const WorkspaceScreen = ({navigation}) => {
 	const handleSetScene = (data) => {
 		const doc = {}
 		doc.where = data.scene.scenario[0].where || ''
-		doc.when = data.scene.scenario[0].where || ''
+		doc.when = data.scene.scenario[0].when || ''
 		if(doc.where && doc.when){
 			handleDateInfo(doc.when + ', ' + doc.where)
 		}

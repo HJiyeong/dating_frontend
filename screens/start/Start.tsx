@@ -67,7 +67,10 @@ const Start = ({navigation}) => {
 	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
 		onSuccess:async(data) => {
 			await Auth.login(data.token)
-			navigation.navigate('Workspace')
+			if(data.is_first_scene){
+				navigation.navigate('Detail')
+			}
+			else navigation.navigate('Workspace')
 
 		}
 	})
