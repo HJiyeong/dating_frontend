@@ -12,7 +12,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './screens/loading/Loading'
 import MainScreen from './screens/main/Main'
-import WorkspaceScreen from './screens/workspace-screen/WorkspaceScreen2';
+import Detail from './screens/detail/Detail'
+import WorkspaceScreen from './screens/workspace-screen/WorkspaceScreen';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Auth from './utils/auth'
@@ -68,6 +69,7 @@ function App() {
 					<Stack.Screen name="Main" options={{headerShown:false}} component={MainScreen}/>
 					<Stack.Screen name="Workspace" options={{headerShown:false}} component={WorkspaceScreen} />
 					<Stack.Screen name="Start" options={{headerShown:false}} component={Start} />
+					<Stack.Screen name="Detail" options={{headerShown:false}} component={Detail} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</>

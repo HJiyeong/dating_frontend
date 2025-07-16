@@ -69,6 +69,7 @@ const Main = ({navigation}) => {
 				<Button title="시나리오" onPress={() => mutateGetTest()} /> */}
 				<Button title='내 작업 공간' onPress={() => navigation.navigate('Workspace')} />
 				<Button title='홈화면' onPress={() => navigation.navigate('Start')} />
+				<Button title='소개화면' onPress={() => navigation.navigate('Detail')} />
 
 				{isCreate && 
 				<>
