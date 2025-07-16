@@ -90,11 +90,11 @@ export const characterHeadImageObject = {
 	'seoyeon_head.png': require('../../assets/images/head/seoyeon_head.png'),
 }
 
-const chapter1Event1 = ''
-const chapter1Event4 = ''
-const chapter2Event3 = ''
-const chapter3Event4 = ''
-const chapter4Event1 = ''
+const chapter1Event1 = '687691b202396a82e88e131e'
+const chapter1Event4 = '687691e1d198ffd8e83f91c7'
+const chapter2Event3 = '6876920dc054517ba896afd0'
+const chapter3Event4 = '68769244732da0b9424f3667'
+const chapter4Event1 = '68778a26151f8e3e7afd1b24'
 const WorkspaceScreen = ({navigation}) => {
 	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
 	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
