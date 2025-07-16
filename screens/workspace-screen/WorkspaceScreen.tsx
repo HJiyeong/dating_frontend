@@ -238,7 +238,7 @@ const WorkspaceScreen = ({navigation}) => {
 		const item = await Auth.isLoggedIn()
 		if(!item){
 			Alert.alert('로그인 필요', '시작화면으로 이동합니다.')
-			navigation.navigate("Loading")
+			navigation.navigate("Start")
 		} 
 	}
 	useEffect(() => {

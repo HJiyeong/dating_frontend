@@ -84,7 +84,7 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey, n
                         trackColor={{ true: '#a5a356ff', false: '#ccc' }}
                     />
                 </View>
-                <View style={styles.optionBox} onStartShouldSetResponder={() => true}>
+                {/* <View style={styles.optionBox} onStartShouldSetResponder={() => true}>
                     <Text style={styles.optionText}>Ai 보이스</Text>
                     <Switch
                         value={voiceType == 'on'}
@@ -92,7 +92,7 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey, n
                         thumbColor={voiceType == 'on' ? '#57582f86' : '#eee'}
                         trackColor={{ true: '#a5a356ff', false: '#ccc' }}
                     />
-                </View>
+                </View> */}
                 {/* <View style={{...styles.optionBox, alignItems:'center', justifyContent:'center'}}>
                     <Text style={{...styles.optionText, color:'#dc4a43'}}>로그아웃</Text>
                 </View> */}
@@ -100,7 +100,7 @@ const SettingsModal = ({ visible, onClose, backgroundSoundKey, effectSoundKey, n
 					style={styles.closeButton} 
 					onPress={async() => {
 						await Auth.logout()
-						navigation.navigate('Main')
+						navigation.navigate('Start')
 					}}
 				>
                     <Text style={styles.closeButtonText}>로그아웃</Text>

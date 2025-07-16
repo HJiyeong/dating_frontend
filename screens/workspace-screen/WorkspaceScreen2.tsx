@@ -6,10 +6,12 @@ import useMutateGetImage from '../../hooks/mutation/useMutateGetImage'
 import useMutateGetAudio from '../../hooks/mutation/useMutateGetAudio'
 import OverlayLoading from '../../components/OverlayLoading';
 import SettingsModal from '../../components/SettingsModal';
+import { useMutation } from "@tanstack/react-query";
 import useMutateGetScenario from '../../hooks/mutation/useMutateGetScenario'
 import useMutateGetCurrentScenario from '../../hooks/mutation/useMutateGetCurrentScenario'
 import useMutateGetCharacterList from '../../hooks/mutation/useMutateGetCharacterList'
 import useQueryGetImage from '../../hooks/query/useQueryGetImage'
+import url from '../../utils/backend'
 import useQueryGetAudio from '../../hooks/query/useQueryGetAudio'
 // import {backgroundImageObject, characterImageObject, characterHeadObject} from '../../utils/urlObject'
 import effectTypeZustand from '../../store/effectType'
@@ -17,6 +19,13 @@ import soundTypeZustand from '../../store/soundType'
 import {playSignedUrl, playQuoteAudio, stopQuoteAudio, stopSound} from '../../utils/sound'
 import Auth from '../../utils/auth'
 import josa from '../../utils/josa'
+import axios from 'axios';
+export const chapterImageObject = {
+	'chapter1': require('../../assets/images/ch1.png'),
+	'chapter2': require('../../assets/images/ch2.png'),
+	'chapter3': require('../../assets/images/ch3.png'),
+	'chapter4': require('../../assets/images/ch4.png')
+}
 export const backgroundImageObject = {
 	'blackboard_harin.jpg': require('../../assets/images/background/blackboard_harin.jpg'),
 	'blackboard_seoyeon.jpg': require('../../assets/images/background/blackboard_seoyeon.jpg'),
@@ -86,6 +95,7 @@ const WorkspaceScreen = ({navigation}) => {
 	const indexRef = useRef(0);
 	const [showModal, setShowModal] = useState(false);
 	const [displayedText, setDisplayedText] = useState('');
+	const [justLoading, setJustLoading] = useState(false)
 	const [nextSceneId, setNextSceneId] = useState('')
 	const [dialogList, setDialogList] = useState([])
 	const [characterList, setCharacterList] = useState([])
@@ -100,9 +110,14 @@ const WorkspaceScreen = ({navigation}) => {
 	// const [backgroundSoundKey, setBackgroundSoundKey] = useState('')
 	// const [effectSoundKey, setEffectSoundKey] = useState('')
 	const [item, setItem] = useState({})
+	const [visibleText, setVisibleText] = useState('')
 	const effectType = effectTypeZustand(state => state.effectType)
+	const [scoreList, setScoreList] = useState([])
 	const soundType = soundTypeZustand(state => state.soundType)
 	const [isChangeEffect, setIsChangeEffect] = useState(false)
+	const [eventTitle, setEventTitle] = useState('')
+	const [chapterTitle, setChapterTitle] = useState('')
+	const [chapterNumber, setChapterNumber] = useState('')
   	const translateX = useRef(new Animated.Value(0)).current;
 	//   const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
 
@@ -148,6 +163,7 @@ const WorkspaceScreen = ({navigation}) => {
 
 	const handleSetScene = (data) => {
 		const doc = {}
+		if(data.scene.scenario[0].where && data.scene.scenario[0].when) doc.info = data.scene.scenario[0].when + ', ' + data.scene.scenario[0].where
 		if(data.scene.scenario[0].background_image_id) doc.background_image_id = data.scene.scenario[0].background_image_id
 		if(data.scene.scenario[0].not_character) doc.character_image_id = ''
 		else if(data.scene.scenario[0].character_image_id) doc.character_image_id = data.scene.scenario[0].character_image_id
@@ -161,19 +177,42 @@ const WorkspaceScreen = ({navigation}) => {
 		setItem(doc)
 		setDialogList(data.scene.scenario)
 	}
-
+	const handleEventTitle = (event_title) => {
+		setEventTitle(event_title); // 글자 띄우기
+		const timer = setTimeout(() => {
+			setEventTitle(''); // 일정 시간 후 사라지게
+		  }, 3000); // 2초 표시
+	  
+		  return () => clearTimeout(timer); // cleanup
+	}
     const {mutate: mutateGetScenario, isLoading: loadingScene} = useMutateGetScenario({
 		onSuccess:(data) => {
-			console.log(data)
-			handleSetScene(data)
+			handleGetInfo(data)
+			setJustLoading(false)
 		}
 	})
-
-	const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
-		onSuccess:(data) => {
-			console.log(data)
+	const handleGetInfo = (data) => {
+		if(data.scene.event == 1){
+			setChapterTitle(data.scene.chapter_title)
+			setChapterNumber(data.scene.chapter_number)
+			const timer = setTimeout(() => {
+				setChapterTitle('')
+				setChapterNumber('')
+				handleEventTitle(data.scene.event + '. ' + data.scene.event_title)
+				handleSetScene(data)
+			}, 3000)
+			return () => clearTimeout(timer)
+		}
+		else{
+			handleEventTitle(data.scene.event + '. ' + data.scene.event_title)
 			handleSetScene(data)
 		}
+	}
+	const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
+		onSuccess:(data) => {
+			handleGetInfo(data)
+			setJustLoading(false)
+		},
 	})
 //   const {data: backgroundImage = '', isLoading, isFetching} = useQueryGetImage({
 // 	queryKey:['background_image', backgroundImageKey],
@@ -189,7 +228,7 @@ const WorkspaceScreen = ({navigation}) => {
 	//   })
 	const handleText = async() => {
 		let textItem = dialogList?.find(e => e.id == item.current_id)?.script || '';
-		if(dialogList?.find(e => e.id == item.current_id)?.user_name){
+		if(dialogList?.find(e => e.id == item.current_id)?.user_name === true){
 			let josaType = dialogList.find(e => e.id == item.current_id)?.josa
 			let userName = await Auth.getName()
 			textItem = textItem.replace('user_name', josaType ? josa(userName, josaType): userName)
@@ -223,18 +262,36 @@ const WorkspaceScreen = ({navigation}) => {
 			setIsTyping(false);
 		}
 	};
-
-
+	const handleChangeEvent = async() => {
+		const res = await axios.post(url + '/user/score', {
+			next_scene_id:nextSceneId,
+			score_list: scoreList
+		})
+		return res.data
+	}
+	const {mutate: mutateChangeEvent, isLoading: loadingChangeEvent} = useMutation({
+		mutationFn: handleChangeEvent,
+		onSuccess:(data) => {
+			setJustLoading(true)
+			mutateGetScenario({id: nextSceneId})
+			setScoreList([])
+		}
+	})
 	const handleNext = () => {
 		if(isTyping){
 			skipTyping()
 			return;
 		}
+		if(item.options?.length > 0 && scoreList.length == 0) return;
 		if (isAction) return; // 타이핑 중일 땐 넘기기 방지
 		const currentIndex = dialogList.findIndex(e => e.id == item.current_id)
 		if (currentIndex < dialogList.length - 1) {
 			const tmp = dialogList[currentIndex + 1]
 			const doc = {...item}
+			if(tmp.where && tmp.when) doc.info = tmp.when + ', ' + tmp.where
+			else if(tmp.where && doc.when) doc.info = doc.when + ', ' + tmp.where
+			else if(tmp.when && doc.where) doc.info = tmp.when + ', ' + doc.where
+			else doc.info = ''
 			if(tmp.background_image_id) doc.background_image_id = tmp.background_image_id
 			if(tmp.not_character) doc.character_image_id = ''
 			else if(tmp.character_image_id){
@@ -256,6 +313,8 @@ const WorkspaceScreen = ({navigation}) => {
 			}
 			if(tmp.character_id) doc.character_id = tmp.character_id
 			else doc.character_id = ''
+			if(tmp.options) doc.options = tmp.options
+			else doc.options = []
 			doc.type = tmp.type
 			// setCurrentType(tmp.type)
 			doc.current_id = dialogList[currentIndex + 1].id
@@ -274,7 +333,8 @@ const WorkspaceScreen = ({navigation}) => {
 			else setIsAction(false)
 		}
 		else if(currentIndex == (dialogList.length - 1)){
-			mutateGetScenario({id: nextSceneId})
+			// mutateGetScenario({id: nextSceneId})
+			mutateChangeEvent({})
 		}
 	};//where, when, options 필요
 
@@ -283,6 +343,16 @@ const WorkspaceScreen = ({navigation}) => {
 	// 	else setCharacterImage(require('../../assets/images/789.png'));  // 이미지 변경
 	// 	setIsCurrent(!isCurrent)
 	// };
+	useEffect(() => {
+		if (!item.info) return;
+	
+		setVisibleText(item.info); // 글자 띄우기
+		const timer = setTimeout(() => {
+			setVisibleText(''); // 일정 시간 후 사라지게
+		  }, 3000); // 2초 표시
+	  
+		  return () => clearTimeout(timer); // cleanup
+	},[item.info])
 	useEffect(() => {
 		if(item.background_sound_id){
 			if(soundType == 'on') playSignedUrl(item.background_sound_id)
@@ -299,6 +369,7 @@ const WorkspaceScreen = ({navigation}) => {
 	},[item.effect_sound_id, isChangeEffect])
 
 	useEffect(() => {
+		setJustLoading(true)
 		mutateGetCurrentScenario({})
 		mutateGetCharacter({})
 		// mutateGetScenario({id: '68769234a0a3f70c8c5faa39'})
@@ -307,7 +378,7 @@ const WorkspaceScreen = ({navigation}) => {
 		const item = await Auth.isLoggedIn()
 		if(!item){
 			Alert.alert('로그인 필요', '시작화면으로 이동합니다.')
-			navigation.navigate("Loading")
+			navigation.navigate("Start")
 		} 
 	}
 	useEffect(() => {
@@ -319,12 +390,57 @@ const WorkspaceScreen = ({navigation}) => {
 			source={backgroundImageObject[item.background_image_id]}
 			style={{ flex: 1 }}
 		>
-			{(loadingAudio || loadingScenario || loadingCharacter) && <OverlayLoading/>}
+			{(loadingAudio || loadingChangeEvent || loadingScenario || loadingScene || loadingCharacter) && <OverlayLoading/>}
 			<Container style={styles.overlay}>
 				<TouchableOpacity style={styles.settingsButton} onPress={() => setShowModal(true)}> 
 					<Text style={styles.settingsText}>⚙️</Text>
 				</TouchableOpacity>
-
+				{eventTitle && 
+				<ImageBackground
+					source={require('../../assets/images/event_title_conatiner.png')}
+					style={{width:500, height:100, zIndex:30, justifyContent:'center', alignItems:'center'}}
+				>
+					<Text style={{fontFamily:'myfont', color:'#412316', fontSize:30, fontWeight:'bold'}}>{eventTitle}</Text>
+				</ImageBackground>}
+				{chapterTitle && 
+				<ImageBackground
+					source={require('../../assets/images/chapter_title_container.png')}
+					style={{position:'absolute', width:'100%', top:20, zIndex:30, height:'95%', flexDirection:'row',alignItems:'center',}}
+				>
+					<FastImage 
+						source={chapterImageObject['chapter' + chapterNumber]}
+						style={{width:171, height:256, marginLeft:50}}
+					/>
+					<View style={{flex: 1, paddingRight:50}}>
+						<View style={{borderColor:'#000', borderBottomWidth:1, paddingBottom:10, alignItems:'center'}}>
+							<Text style={{fontSize:30, color: '#fff', fontWeight:'bold'}}>{'Chapter' + chapterNumber +'.'}</Text>
+						</View>
+						<View style={{borderColor:'#000', borderBottomWidth:1,alignItems:'center', paddingBottom:10}}>
+							<Text style={{fontSize:30, color: '#fff', fontWeight:'bold'}}>{'"' + chapterTitle + '"'}</Text>
+						</View>
+					</View>
+				</ImageBackground>}
+				{visibleText && 
+				<View style={{position:'absolute', height: 30,zIndex:30, width:'100%', top:60, backgroundColor:'rgba(0,0,0,0.7)', justifyContent:'center', paddingLeft:30}}>
+					<Text style={{fontFamily:'myfont', color:'#fff'}}>{visibleText}</Text>
+				</View>}
+				{item.options?.length > 0 && 
+					<View style={{position:'absolute',width:'100%', gap:20, height:'100%', justifyContent:'center', alignItems:'center'}}>	
+					{item.options.map(data => {
+						return(
+							<TouchableOpacity 
+								onPress={() => {
+									setScoreList(data.score_list); 
+									setDisplayedText(data.text)
+									setItem(prev => ({...prev, options: []}))
+								}} 
+								key={data.id} style={{width:450,fontFamily:'myfont',  height:60, borderRadius:33, justifyContent:'center', alignItems:'center', zIndex:20, backgroundColor:'#694E44', borderColor:'#050000', borderWidth:1}}>
+								<Text style={{color:'#fff'}}>{data.text}</Text>
+							</TouchableOpacity>
+						)
+					})}
+					</View>
+				}
 				<View style={styles.characterContainer}>
 					<Animated.View style={{position:'relative', transform: [{ translateX }] }}>
 						{item.character_image_id && 

@@ -27,7 +27,7 @@ function App() {
 		}, function (error) {
 		if(error.response?.data?.message?.name == 'JsonWebTokenError'){
 			Auth.logout()
-			navigate("Loading")
+			navigate("Start")
 		}
 		return Promise.reject(error);
 		});
@@ -54,8 +54,7 @@ function App() {
 	const checkIsLoggedIn = async() => {
 		const item = await Auth.isLoggedIn()
 		if(!item){
-			Alert.alert('로그인 필요', '시작화면으로 이동합니다.')
-			navigate("Loading")
+			navigate("Start")
 		}
 	}
 	useEffect(() => {
@@ -65,8 +64,8 @@ function App() {
 		<>
 			{setDefaultInterceptor()}
 			<NavigationContainer ref={navigationRef}>
-				<Stack.Navigator initialRouteName="Loading">
-					<Stack.Screen name="Loading" options={{headerShown:false}} component={LoadingScreen}/>
+				<Stack.Navigator initialRouteName="Start">
+					{/* <Stack.Screen name="Loading" options={{headerShown:false}} component={LoadingScreen}/> */}
 					<Stack.Screen name="Main" options={{headerShown:false}} component={MainScreen}/>
 					<Stack.Screen name="Workspace" options={{headerShown:false}} component={WorkspaceScreen} />
 					<Stack.Screen name="Start" options={{headerShown:false}} component={Start} />
