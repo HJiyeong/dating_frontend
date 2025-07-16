@@ -432,7 +432,7 @@ const WorkspaceScreen = ({navigation}) => {
 								onPress={() => {
 									setScoreList(data.score_list); 
 									setDisplayedText(data.text)
-									setItem(prev => ({...prev, options: []}))
+									setItem(prev => ({...prev, character_id:'', options: []}))
 								}} 
 								key={data.id} style={{width:450,fontFamily:'myfont',  height:60, borderRadius:33, justifyContent:'center', alignItems:'center', zIndex:20, backgroundColor:'#694E44', borderColor:'#050000', borderWidth:1}}>
 								<Text style={{color:'#fff'}}>{data.text}</Text>

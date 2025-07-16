@@ -1,4 +1,4 @@
-import {Modal, StyleSheet, View, ActivityIndicator, Text} from 'react-native'
+import {Modal, StyleSheet, View, ActivityIndicator,ImageBackground, Text} from 'react-native'
 const styles = StyleSheet.create({
 	container: {
 	  flex: 1, justifyContent: 'center', alignItems: 'center'
@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
 		position:'absolute',
 		width:'100%',
 		height:'100%',
-		zIndex:10,
-		backgroundColor: 'rgba(0,0,0,0.4)', // 반투명 배경
+		zIndex:50,
+		// backgroundColor: 'rgba(0,0,0,0.4)', // 반투명 배경
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -26,12 +26,15 @@ const styles = StyleSheet.create({
   });
 const OverlayLoading = () => {
 	return(
-		<View style={styles.overlay}>
+		<ImageBackground 
+			source={require('../assets/images/loading.png')} 
+			style={styles.overlay}
+		>
 			<View style={styles.spinnerContainer}>
 				<ActivityIndicator size="large" color="#ffffff" />
 				<Text style={styles.loadingText}>로딩 중...</Text>
 			</View>
-		</View>
+		</ImageBackground>
 	)
 }
 
