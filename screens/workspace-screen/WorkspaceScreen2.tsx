@@ -291,6 +291,7 @@ const WorkspaceScreen = ({navigation}) => {
 		  return () => clearTimeout(timer); // cleanup
 	}
 	const handleNext = () => {
+		if((loadingAudio || loadingChangeEvent || loadingScenario || loadingScene || loadingCharacter)) return;
 		if(isTyping){
 			skipTyping()
 			return;
@@ -301,8 +302,15 @@ const WorkspaceScreen = ({navigation}) => {
 		if (currentIndex < dialogList.length - 1) {
 			const tmp = dialogList[currentIndex + 1]
 			const doc = {...item}
-			if(tmp.where) doc.where = tmp.where
-			if(tmp.when) doc.when = tmp.when
+			let isSet = false
+			if(tmp.where){
+				doc.where = tmp.where
+				isSet = true
+			}
+			if(tmp.when){
+				isSet = true
+				doc.when = tmp.when
+			}
 			if(doc.where && doc.when) handleDateInfo(doc.when + ', ' + doc.where)
 			if(tmp.background_image_id) doc.background_image_id = tmp.background_image_id
 			if(tmp.not_character) doc.character_image_id = ''

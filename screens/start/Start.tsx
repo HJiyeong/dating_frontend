@@ -15,11 +15,15 @@ import {
 	unlink,
   } from '@react-native-seoul/kakao-login';
 import Auth from '../../utils/auth'
+import axios from 'axios';
 const Start = ({navigation}) => {
 	const [name, setName] = useState('')
 	const [isCreate, setIsCreate] = useState(false)
 	const [kakaoId, setKakaoId] = useState('')
 	const handleLoadGame = async (): Promise<void> => {
+		// console.log(123)
+		// await checkFunc();
+		// return;
 		if(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) return;
 		// const isLoggedIn = await Auth.isLoggedIn()
 		// if(isLoggedIn){
@@ -64,6 +68,16 @@ const Start = ({navigation}) => {
 			}
 		}
 	})
+	const checkFunc = async() => {
+		try{
+			console.log('123')
+			const res = await axios.get("https://dating-backend-hd5b.onrender.com/")
+			console.log(res.data)
+		}
+		catch(e){
+			console.log(e)
+		}
+	}
 	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
 		onSuccess:async(data) => {
 			await Auth.login(data.token)
