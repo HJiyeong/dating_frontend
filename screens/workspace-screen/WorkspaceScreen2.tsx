@@ -103,6 +103,8 @@ const WorkspaceScreen = ({navigation}) => {
 	const effectType = effectTypeZustand(state => state.effectType)
 	const soundType = soundTypeZustand(state => state.soundType)
 	const [isChangeEffect, setIsChangeEffect] = useState(false)
+	const [eventTitle, setEventTitle] = useState('')
+	const [chapterTitle, setChapterTitle] = useState('')
   	const translateX = useRef(new Animated.Value(0)).current;
 	//   const [characterImage, setCharacterImage] = useState(require('../../assets/images/sample_img.png'));  // 이미지 상태 추가
 
@@ -165,6 +167,8 @@ const WorkspaceScreen = ({navigation}) => {
     const {mutate: mutateGetScenario, isLoading: loadingScene} = useMutateGetScenario({
 		onSuccess:(data) => {
 			console.log(data)
+			setEventTitle(data.scene.event_title)
+			setChapterTitle(data.scene.chapter_title)
 			handleSetScene(data)
 		}
 	})
@@ -172,6 +176,8 @@ const WorkspaceScreen = ({navigation}) => {
 	const {mutate: mutateGetCurrentScenario, isLoading: loadingScenario} = useMutateGetCurrentScenario({
 		onSuccess:(data) => {
 			console.log(data)
+			setEventTitle(data.scene.event_title)
+			setChapterTitle(data.scene.chapter_title)
 			handleSetScene(data)
 		}
 	})
