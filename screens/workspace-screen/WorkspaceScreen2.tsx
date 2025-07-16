@@ -311,7 +311,7 @@ const WorkspaceScreen = ({navigation}) => {
 				isSet = true
 				doc.when = tmp.when
 			}
-			if(doc.where && doc.when) handleDateInfo(doc.when + ', ' + doc.where)
+			if(doc.where && doc.when && isSet) handleDateInfo(doc.when + ', ' + doc.where)
 			if(tmp.background_image_id) doc.background_image_id = tmp.background_image_id
 			if(tmp.not_character) doc.character_image_id = ''
 			else if(tmp.character_image_id){
@@ -394,7 +394,7 @@ const WorkspaceScreen = ({navigation}) => {
 		setJustLoading(true)
 		mutateGetCurrentScenario({})
 		mutateGetCharacter({})
-		// mutateGetScenario({id: '68769234a0a3f70c8c5faa39'})
+		// mutateGetScenario({id: '68778a26151f8e3e7afd1b24'})
 	},[])
 	const checkIsLoggedIn = async() => {
 		const item = await Auth.isLoggedIn()
