@@ -1,35 +1,114 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '../../components/Container';
-import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View,TextInput, Button, Alert, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import OverlayLoading from '../../components/OverlayLoading';
+import useMutateLogin from '../../hooks/mutation/useMutateLogin'
+import useMutateCheckExist from '../../hooks/mutation/useMutateCheckExist'
+import useMutateCreateUser from '../../hooks/mutation/useMutateCreateUser'
+import {
+	KakaoOAuthToken,
+	KakaoProfile,
+	getProfile,
+	login,
+	logout,
+	unlink,
+  } from '@react-native-seoul/kakao-login';
+import Auth from '../../utils/auth'
+const Start = ({navigation}) => {
+	const [name, setName] = useState('')
+	const [isCreate, setIsCreate] = useState(false)
+	const [kakaoId, setKakaoId] = useState('')
+	const handleLoadGame = async (): Promise<void> => {
+		if(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) return;
+		const isLoggedIn = await Auth.isLoggedIn()
+		if(isLoggedIn){
+			navigation.navigate('Workspace')
+		}
+		else{
+			const token: KakaoOAuthToken = await login();
+			const profile: KakaoProfile = await getProfile();
+			mutateCheckExist({kakao_id: profile.id})
+		}
+	};
+	const handleNewGame = async (): Promise<void> => {
+		if(loadingCheck || loadingLogin || loadingCreate || loadingCheckNew) return;
+	  	const token: KakaoOAuthToken = await login();
+		const profile: KakaoProfile = await getProfile();
+		mutateCheckExistNew({kakao_id: profile.id})
+	};
+	const handleCreate = () => {
+		console.log(1234123123)
+		if(!name){
+			Alert.alert('이름 없음', '이름을 입력해주세요.')
+		}
+		else{
+			mutateCreateUser({kakao_id: kakaoId, name: name})
+		}
+	}
+	const {mutate: mutateCreateUser, isLoading: loadingCreate} = useMutateCreateUser({
+		onSuccess:(data) => {
+			mutateLogin({user_id: data.user_id})
+		}
+	})
+	const {mutate: mutateCheckExistNew, isLoading: loadingCheckNew} = useMutateCheckExist({
+		onSuccess:(data) => {
+			setKakaoId(data.kakao_id)
+			setIsCreate(true)
+		}
+	})
+	const {mutate: mutateCheckExist, isLoading: loadingCheck} = useMutateCheckExist({
+		onSuccess:(data) => {
+			if(data.is_exist) mutateLogin({user_id: data.user_id})
+			else{
+				Alert.alert('계정 없음', 'New Game으로 시작해주세요.')
+			}
+		}
+	})
+	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
+		onSuccess:async(data) => {
+			await Auth.login(data.token)
+			navigation.navigate('Workspace')
 
-const Start = () => {
-    const handlePress = () => {
-    navigation.navigate('Main');   // 이동할 화면 이름으로 수정
-  };
-  return (
-    <View style={styles.container}>
-      <Image
-        source={require('../../assets/images/Home.jpg')}
-        style={styles.image}
-        resizeMode="cover"
-      />
-    <TouchableOpacity onPress={handlePress} style={styles.button}>
-        <Image
-            source={require('../../assets/images/new_game.png')}  
-            style={styles.buttonImage}
-            resizeMode="contain"
-        />
-    </TouchableOpacity>
-    <TouchableOpacity onPress={handlePress} style={styles.button2}>
-        <Image
-            source={require('../../assets/images/load_game.png')}  
-            style={styles.buttonImage}
-            resizeMode="contain"
-        />
-    </TouchableOpacity>
-    </View>
-  );
+		}
+	})
+	return (
+		<View style={styles.container}>
+		<Image
+			source={require('../../assets/images/Home.jpg')}
+			style={styles.image}
+			resizeMode="cover"
+		/>
+		{(isCreate) 
+		?
+				<View style={{position:'absolute', bottom:20, width:'100%'}}>
+					<TextInput
+						style={{height:40,fontSize: 14, width:'100%', backgroundColor:'#fff' }}
+						maxLength={10}
+						placeholder="이름을 입력해주세요"
+						value={name}
+						onChangeText={setName}
+					/>
+					<Button title="새 게임 시작하기" onPress={handleCreate} />
+				</View>
+		:	<>
+			<TouchableOpacity onPress={handleNewGame} style={styles.button}>
+				<Image
+					source={require('../../assets/images/new_game.png')}  
+					style={styles.buttonImage}
+					resizeMode="contain"
+				/>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={handleLoadGame} style={styles.button2}>
+				<Image
+					source={require('../../assets/images/load_game.png')}  
+					style={styles.buttonImage}
+					resizeMode="contain"
+				/>
+			</TouchableOpacity>
+			</>		
+		}
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({

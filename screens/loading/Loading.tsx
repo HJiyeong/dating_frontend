@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 })
 const Loading = ({navigation}) => {
 	return(
-		<Pressable style={({pressed}) => ({...styles.container})} onPress={() => navigation.navigate("Main")}>
+		<Pressable style={({pressed}) => ({...styles.container})} onPress={() => navigation.navigate("Start")}>
 			<Container>
 				<Text>로딩창</Text>
 			</Container>
